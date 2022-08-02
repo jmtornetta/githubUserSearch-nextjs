@@ -4,9 +4,12 @@ import Button from "/components/button"
 import Image from "next/image"
 import { classNames } from "/utils/classNames.js"
 import { useState } from "react"
-import { token } from "/token.js"
+// import { token } from "/token.js" // For testing and development
 
 export default function SearchGithub() {
+  const token = process.env.GITHUB_AUTH
+  console.log(process.env.TEST_VAR)
+  
   /* App configuration and constants */
   const fetchOptions = {
     headers: {
