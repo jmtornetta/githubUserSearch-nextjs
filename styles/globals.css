@@ -1,0 +1,32 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+@layer base {
+  p {
+    @apply mt-4
+  }
+  /* ol,ul,li {
+    @apply mt-2 ml-4
+  } */
+  h1 {
+    @apply text-4xl;
+  }
+  h2 {
+    @apply text-olive-700 font-semibold mt-6 text-3xl
+  }
+  h3 {
+    @apply text-olive-700 font-semibold mt-6 text-2xl
+  }
+  h4 {
+    @apply text-olive-700 font-semibold mt-6 text-xl
+  }
+  h5 {
+    @apply text-olive-700 font-semibold mt-6 text-lg
+  }
+  h6 {
+    @apply text-olive-700 font-semibold mt-6 text-base
+  }
+}
