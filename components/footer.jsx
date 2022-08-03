@@ -1,4 +1,4 @@
-import Link from "next/link";
+// import Link from "next/link";
 
 export default function Footer(){return(
     <footer className="text-brown-300 bg-brown-700">
@@ -10,7 +10,7 @@ export default function Footer(){return(
         <section id="footer-disclaimers" className="flex items-center">
             <div className="mx-auto my-6 text-sm">
                 <p id="copyright" className="text-center">© {new Date().getFullYear()} Jon Tornetta</p>
-                <p id="privacyPolicy" className="text-center"><Link href="/privacy-policy">Privacy Policy</Link></p>
+                {/* <p id="privacyPolicy" className="text-center"><Link href="/privacy-policy">Privacy Policy</Link></p> */}
             </div>
         </section>
     </footer>
