@@ -101,9 +101,9 @@ export default function SearchGithub() {
 
   /* App structure and styling */
   const columns = ["Profile", "Login", "Name", "Repos", "Followers", "Email", "Website", "Company", "Location", "Bio", "Last Update", "Created At"]
-  const pageButtonClasses = "border border-brown-800 py-1 px-2" // Set classes on pagination buttons to same format
-
+  
   function Pagination(props) {
+    const pageButtonClasses = "border border-brown-800 py-1 px-2" // Set classes on pagination buttons to same format
     return (
       <ReactPaginate
         className={classNames("flex text-brown-800 flex-wrap justify-center sm:justify-start", props.isTop ? "mb-4" : "mt-4", props.classNames)}
