@@ -12,6 +12,7 @@ Search GitHub users via the GitHub search, users, and repos API.
 + [ ] Add site icon.  
 # Changelog
 ## 08/04/2022
++ [x] Add guard clause if no API key provided.  
 + [x] Add double scroll bars to table.  
 + [x] Reformat link colors (green).  
 ## 08/03/2022

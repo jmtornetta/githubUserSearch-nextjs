@@ -8,7 +8,10 @@ import { useState } from "react"
 // import { token } from "/token.js" // For testing and development
 const token = process.env.GITHUB_AUTH
 
+
 export default function SearchGithub() {
+  if(!token) throw "Cannot read GitHub API Key."
+  
   /* App configuration and constants */
   const fetchOptions = {
     headers: {
