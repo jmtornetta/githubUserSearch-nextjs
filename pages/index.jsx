@@ -1,14 +1,15 @@
 import ReactPaginate from "react-paginate"
+import DoubleScrollbar from "react-double-scrollbar"
 import Layout from "/components/layout"
 import Button from "/components/button"
 import Image from "next/image"
 import { classNames } from "/utils/classNames.js"
 import { useState } from "react"
 // import { token } from "/token.js" // For testing and development
+const token = process.env.GITHUB_AUTH
 
 export default function SearchGithub() {
   /* App configuration and constants */
-  const token = process.env.GITHUB_AUTH
   const fetchOptions = {
     headers: {
       Authorization: `token ${token}`
@@ -146,26 +147,33 @@ export default function SearchGithub() {
         {results.totalCount > 0 &&
           <>
             <div id="results-total" className="block mt-4 ml-0 mr-auto"><span className="font-bold">Total Results: </span><span>{results.totalCount}</span></div>
-            <div className="container w-full overflow-x-auto">
-              <table className="w-full mt-10 text-sm text-center">
-                <thead><tr>{columns.map(col => <th className="-rotate-45 -translate-y-5" key={col}>{col}</th>)}</tr></thead>
-                <tbody>
-                  {results.items.map(result => (
-                    <tr key={result.id}>
-                      <td className="border"><a href={result.html_url} target="_blank"><Image className="rounded" src={result.avatar_url} width="50" height="50"></Image></a></td>
-                      <td className="p-1 break-words border max-w-[150px]">{result.login}</td>
-                      <td className="p-1 break-words border max-w-[150px]">{result.name}</td>
-                      <td className="p-1 break-words border max-w-[150px]"><span className="text-brown-800"><a href={result.html_url + "?tab=repositories"}>{result.public_repos}</a></span></td>
-                      <td className="p-1 break-words border max-w-[150px]">{result.followers}</td>
-                      <td className="p-1 break-words border max-w-[150px]">{result.email}</td>
-                      <td className="p-1 break-words border max-w-[150px]">{result.blog}</td>
-                      <td className="p-1 break-words border max-w-[150px]">{result.company}</td>
-                      <td className="p-1 break-words border max-w-[150px]">{result.location}</td>
-                      <td className="p-1 break-words border max-w-[150px]">{result.bio}</td>
-                      <td className="p-1 break-words border max-w-[150px]">{convertDate(result.updated_at)}</td>
-                      <td className="p-1 break-words border max-w-[150px]">{convertDate(result.created_at)}</td>
-                    </tr>
-                  ))}</tbody></table></div></>}
+            {/* <div className="container w-full"> */}
+              <DoubleScrollbar>
+                <table className="w-full mt-10 text-sm text-center">
+                  <thead><tr>{columns.map(col => <th className="-rotate-45 -translate-y-5" key={col}>{col}</th>)}</tr></thead>
+                  <tbody>
+                    {results.items.map(result => (
+                      <tr key={result.id}>
+                        <td className="border"><a href={result.html_url} target="_blank"><Image className="rounded" src={result.avatar_url} width="50" height="50"></Image></a></td>
+                        <td className="p-1 break-words border max-w-[150px]">{result.login}</td>
+                        <td className="p-1 break-words border max-w-[150px]">{result.name}</td>
+                        <td className="p-1 break-words border max-w-[150px]"><span ><a className="text-green-500 underline" href={result.html_url + "?tab=repositories"}>{result.public_repos}</a></span></td>
+                        <td className="p-1 break-words border max-w-[150px]">{result.followers}</td>
+                        <td className="p-1 break-words border max-w-[150px]">{result.email}</td>
+                        <td className="p-1 break-words border max-w-[150px]">{result.blog}</td>
+                        <td className="p-1 break-words border max-w-[150px]">{result.company}</td>
+                        <td className="p-1 break-words border max-w-[150px]">{result.location}</td>
+                        <td className="p-1 break-words border max-w-[150px]">{result.bio}</td>
+                        <td className="p-1 break-words border max-w-[150px]">{convertDate(result.updated_at)}</td>
+                        <td className="p-1 break-words border max-w-[150px]">{convertDate(result.created_at)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </DoubleScrollbar>
+            {/* </div> */}
+          </>
+        }
         {results.items.length === 0 || <Pagination isTop={false} />}
       </div>
     </Layout>
