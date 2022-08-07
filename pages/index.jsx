@@ -5,21 +5,15 @@ import Button from "/components/button"
 import Image from "next/image"
 import { classNames } from "/utils/classNames.js"
 import { useState } from "react"
-// import { token } from "/token.js" // For testing and development
-const token = process.env.GITHUB_AUTH
+// import fetchGithub from "/github.js"
+// import { fetchCatch } from "testFetch.js"
 
+const perPage = 30 // Later can make dynamic with: [perPage,setPerPage] = useState(100)
+const maxResults = 1000 // From GitHub search API spec
 
 export default function SearchGithub() {
-  if(!token) throw "Cannot read GitHub API Key."
-  
+  // if(!token) throw "Cannot read GitHub API Key."
   /* App configuration and constants */
-  const fetchOptions = {
-    headers: {
-      Authorization: `token ${token}`
-    }
-  } // Posterity: Including different header options seems to cause a cors issue
-  const perPage = 30 // Later can make dynamic with: [perPage,setPerPage] = useState(100)
-  const maxResults = 1000 // From GitHub search API spec
 
   const [results, setResultsArr] = useState({
     query: null,
@@ -28,8 +22,17 @@ export default function SearchGithub() {
     overflow: false,
     limits: [30, 30]
   })
-
+   
   /* App logic */
+
+  const fetchGithub = async (search, pageIndex = 0) => {
+    const page = pageIndex + 1
+    const data = await fetch(`/api/github?query=${search}&page=${page}`).then(res => res.json())
+    // const pageIndex = parseInt(data.page)
+    console.log(data)
+    setResultsArr({...data, pageIndex})
+  }
+
   const throttle = (() => {
     let runs = 0
     return (fn, time, ...args) => {
@@ -54,42 +57,6 @@ export default function SearchGithub() {
     else time = delayTime * 16
 
     throttle(fn, time, ...args)
-  }
-
-  const getGithubLimits = async (endpoint = `https://api.github.com/rate_limit`, options = fetchOptions) => {
-    const limits = await fetch(endpoint, options).then(response => response.json())
-    return [limits.resources.search.remaining, limits.resources.search.limit]
-  }
-
-  const fetchGithub = async (query, pageIndex = 0, perPage = perPage, sortMethod, type = "users") => {
-    if (!query) { return }
-    const endpoint = `https://api.github.com/search/${type}`
-    const queryString = '?q=' + encodeURIComponent(`${query}` + " type:user"); // Can add "is:public" here for public repos only
-    const sortString = sortMethod ? '&sort=' + sortMethod : ""
-    const pageGithub = pageIndex + 1 // If a "page" is passed, add one to it. Otherwise, page must be zero.
-    const pageString = '&page=' + pageGithub // Add 1 to page selection (array index)
-    const perPageString = perPage ? '&per_page=' + perPage : ""
-    const url = endpoint + queryString + pageString + perPageString + sortString
-    let output
-    try {
-      // Schema: {total_count,incomplete_results,items}
-      const data = await fetch(url, fetchOptions).then(response => response.json())
-      if (data.total_count > maxResults) { data.overflow = true }
-      const allData = await Promise.all(data.items.map(async (user) => {
-        const userDetails = await fetch(user.url, fetchOptions).then(response => response.json()) // Schema: Object of user detail properties
-        user = { ...user, ...userDetails }
-        // user.repos = await fetch(user.repos_url).then(response => response.json())// Schema: Array of repo objects
-        return user
-      }))
-      output = { items: allData, totalCount: data.total_count, overflow: data.overflow, incompleteResults: data.incomplete_results, limits: await getGithubLimits() }
-    } catch (err) {
-      console.error(`GitHub fetch failed: ${err}`)
-      alert(err)
-      return
-    }
-    setResultsArr({ ...output, query: query, pageIndex: pageIndex })
-    console.log(`Fetched from: ${url}`)
-    return output // Not using output in this case because we are updating state directing within function
   }
 
   const handlePageChange = (event) => {
