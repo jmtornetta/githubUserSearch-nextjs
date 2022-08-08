@@ -116,7 +116,7 @@ export default function SearchGithub() {
                         <td className="border"><a href={result.html_url} target="_blank"><Image unoptimized className="rounded" src={result.avatar_url} width="50" height="50"></Image></a></td>
                         <td className="p-1 break-words border max-w-[150px]">{result.login}</td>
                         <td className="p-1 break-words border max-w-[150px]">{result.name}</td>
-                        <td className="p-1 break-words border max-w-[150px]"><span ><a className="text-green-500 underline" href={result.html_url + "?tab=repositories"}>{result.public_repos}</a></span></td>
+                        <td className="p-1 break-words border max-w-[150px]"><span ><a className="text-green-500 underline" href={result.html_url + "?tab=repositories"} target="_blank">{result.public_repos}</a></span></td>
                         <td className="p-1 break-words border max-w-[150px]">{result.followers}</td>
                         <td className="p-1 break-words border max-w-[150px]">{result.email}</td>
                         <td className="p-1 break-words border max-w-[150px]">{result.blog}</td>
