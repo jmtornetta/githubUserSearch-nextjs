@@ -3,20 +3,16 @@ import DoubleScrollbar from "react-double-scrollbar"
 import Layout from "/components/layout"
 import Button from "/components/button"
 import Image from "next/image"
-import { classNames } from "/utils/classNames.js"
+import { classNames } from "/utils-js/misc"
 import { useState } from "react"
-// import fetchGithub from "/github.js"
-// import { fetchCatch } from "testFetch.js"
+import fetchCatch from "/utils-js/fetchCatch"
 
 const perPage = 30 // Later can make dynamic with: [perPage,setPerPage] = useState(100)
 const maxResults = 1000 // From GitHub search API spec
 
 export default function SearchGithub() {
-  // if(!token) throw "Cannot read GitHub API Key."
-  /* App configuration and constants */
-
   const [results, setResultsArr] = useState({
-    query: null,
+    search: null,
     pageIndex: null,
     items: [],
     overflow: false,
@@ -24,13 +20,11 @@ export default function SearchGithub() {
   })
    
   /* App logic */
-
-  const fetchGithub = async (search, pageIndex = 0) => {
-    const page = pageIndex + 1
-    const data = await fetch(`/api/github?query=${search}&page=${page}`).then(res => res.json())
-    // const pageIndex = parseInt(data.page)
-    console.log(data)
-    setResultsArr({...data, pageIndex})
+  const fetchGithub = async (search, pageIndex = 0, per_page = perPage, max_results = maxResults, sort, type = "users" ) => {
+    if (!search) return
+    const page = parseInt(pageIndex + 1)
+    const data = await fetchCatch(`/api/github`, {search, page, per_page, max_results, sort, type})
+    setResultsArr({...data, search, pageIndex})
   }
 
   const throttle = (() => {
@@ -62,7 +56,7 @@ export default function SearchGithub() {
   const handlePageChange = (event) => {
     // Set new current page, show first page, last page, previous 3 pages and next 3 pages; Add links for page buttons
     const newPage = event.selected // "Event" has a custom method called selected which equal the index of the page array
-    fetchGithub(results.query, newPage) // Fetch again with same query but change page results
+    fetchGithub(results.search, newPage) // Fetch again with same search-query but change page results
   }
 
   const convertDate = (string) => {
@@ -91,11 +85,6 @@ export default function SearchGithub() {
         onPageChange={handlePageChange}
         activeClassName="bg-brown-800 text-white"
         forcePage={results.pageIndex} // Sets the active page from state
-      // breakLinkClassName="page-link"
-      // nextLinkClassName="page-link"
-      // previousLinkClassName="page-link"
-      // pageLinkClassName="page-link"
-      // containerClassName="pagination"
       />
     )
   }
@@ -105,7 +94,7 @@ export default function SearchGithub() {
       <p>Enter a name or email to search GitHub users.</p>
       <input id="search-query"
         className="block px-2 py-1 mt-2 ml-0 mr-auto border rounded shadow-inner border-brown-800"
-        onChange={() => { limitAndThrottle(results.limits[0], results.limits[1], 200, () => fetchGithub(document.getElementById("search-query").value), 500) }}
+        onChange={() => { limitAndThrottle(results.limits[0], results.limits[1], 200, () => fetchGithub(document.getElementById("search-query").value)) }}
         type="text"
         placeholder="Name or email..."
       />
@@ -117,7 +106,6 @@ export default function SearchGithub() {
         {results.totalCount > 0 &&
           <>
             <div id="results-total" className="block mt-4 ml-0 mr-auto"><span className="font-bold">Total Results: </span><span>{results.totalCount}</span></div>
-            {/* <div className="container w-full"> */}
               <DoubleScrollbar>
                 <table className="w-full mt-10 text-sm text-center">
                   <thead><tr>{columns.map(col => <th className="-rotate-45 -translate-y-5" key={col}>{col}</th>)}</tr></thead>
@@ -141,7 +129,6 @@ export default function SearchGithub() {
                   </tbody>
                 </table>
               </DoubleScrollbar>
-            {/* </div> */}
           </>
         }
         {results.items.length === 0 || <Pagination isTop={false} />}
