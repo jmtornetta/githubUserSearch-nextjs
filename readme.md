@@ -2,7 +2,6 @@
 Search GitHub users via the GitHub search, users, and repos API.  
 # Plan
 ## Next
-+ [ ] Setup proxy so `Authorization:"token ".concat(...)` doesn't show in source; Reset auth token and redeploy.    
 ## Later
 + [ ] Add filter/sort to table columns (esp Repos + Followers) via GitHub Search API > Sort/Filter.  
 + [ ] Display spinner icon while fetching is happening.  
@@ -11,6 +10,9 @@ Search GitHub users via the GitHub search, users, and repos API.
 + [ ] Move results into separate component.  
 + [ ] Add site icon.  
 # Changelog
+## 08/07/2022
++ [x] Reduce throttle speed to limit dropped search queries.  
++ [x] Setup proxy so `Authorization:"token ".concat(...)` doesn't show in source; Reset auth token and redeploy.    
 ## 08/04/2022
 + [x] Add guard clause if no API key provided.  
 + [x] Add double scroll bars to table.  
