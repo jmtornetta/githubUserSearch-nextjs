@@ -7,6 +7,7 @@ import { classNames } from "/utils-js/misc"
 import { useState } from "react"
 import fetchCatch from "/utils-js/fetchCatch"
 
+const throttleDelay = 100 // Delay in ms to wait before fetching from API
 const perPage = 30 // Later can make dynamic with: [perPage,setPerPage] = useState(100)
 const maxResults = 1000 // From GitHub search API spec
 
@@ -94,7 +95,7 @@ export default function SearchGithub() {
       <p>Enter a name or email to search GitHub users.</p>
       <input id="search-query"
         className="block px-2 py-1 mt-2 ml-0 mr-auto border rounded shadow-inner border-brown-800"
-        onChange={() => { limitAndThrottle(results.limits[0], results.limits[1], 200, () => fetchGithub(document.getElementById("search-query").value)) }}
+        onChange={() => { limitAndThrottle(results.limits[0], results.limits[1], throttleDelay, () => fetchGithub(document.getElementById("search-query").value)) }}
         type="text"
         placeholder="Name or email..."
       />
