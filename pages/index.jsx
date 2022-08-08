@@ -113,7 +113,7 @@ export default function SearchGithub() {
                   <tbody>
                     {results.items.map(result => (
                       <tr key={result.id}>
-                        <td className="border"><a href={result.html_url} target="_blank"><Image className="rounded" src={result.avatar_url} width="50" height="50"></Image></a></td>
+                        <td className="border"><a href={result.html_url} target="_blank"><Image unoptimized className="rounded" src={result.avatar_url} width="50" height="50"></Image></a></td>
                         <td className="p-1 break-words border max-w-[150px]">{result.login}</td>
                         <td className="p-1 break-words border max-w-[150px]">{result.name}</td>
                         <td className="p-1 break-words border max-w-[150px]"><span ><a className="text-green-500 underline" href={result.html_url + "?tab=repositories"}>{result.public_repos}</a></span></td>
