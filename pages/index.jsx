@@ -3,11 +3,12 @@ import DoubleScrollbar from "react-double-scrollbar"
 import Layout from "/components/layout"
 import Button from "/components/button"
 import Image from "next/image"
-import { classNames } from "/utils-js/misc"
 import { useState } from "react"
+import { classNames } from '/utils-js/domProps'
 import fetchCatch from "/utils-js/fetchCatch"
+import { debounce } from "/utils-js/delay"
 
-const throttleDelay = 100 // Delay in ms to wait before fetching from API
+const debounceDelay = 500 // Delay in ms to wait before fetching from API
 const perPage = 30 // Later can make dynamic with: [perPage,setPerPage] = useState(100)
 const maxResults = 1000 // From GitHub search API spec
 
@@ -28,30 +29,21 @@ export default function SearchGithub() {
     setResultsArr({...data, search, pageIndex})
   }
 
-  const throttle = (() => {
-    let runs = 0
-    return (fn, time, ...args) => {
-      runs += 1
-      const currentRun = runs
-      setTimeout(() => {
-        if (currentRun === runs) fn(...args)
-      }, time)
-    }
-  })()
+  const debounceFetch = debounce(fetchGithub, debounceDelay)
 
-  const limitAndThrottle = (remaining, limit, delayTime, fn, ...args) => {
+  const limitAndDebounce = (remaining, limit, selector) => {
     if (remaining === 0) { alert("Exceeded limit! Wait a minute."); return }
-    // runCount += 1 // Posterity: Using rate limit API instead as stopper for simplicity.
-
-    let time
-    const left = remaining / limit
-    if (left > .8) time = delayTime
-    else if (left > .6) time = delayTime * 2
-    else if (left > .4) time = delayTime * 4
-    else if (left > .2) time = delayTime * 8
-    else time = delayTime * 16
-
-    throttle(fn, time, ...args)
+    // [ ] TODO Add back linear function to increase delay time as limit approaches; Maybe "useState"
+    // [ ] FIX Troubleshoot "Forced reflow while executing JavaScript took" (later)
+    // let time
+    // const left = remaining / limit
+    // if (left > .8) time = delayTime
+    // else if (left > .6) time = delayTime * 2
+    // else if (left > .4) time = delayTime * 4
+    // else if (left > .2) time = delayTime * 8
+    // else time = delayTime * 16
+    // console.log(time)
+    debounceFetch(selector)
   }
 
   const handlePageChange = (event) => {
@@ -95,11 +87,11 @@ export default function SearchGithub() {
       <p>Enter a name or email to search GitHub users.</p>
       <input id="search-query"
         className="block px-2 py-1 mt-2 ml-0 mr-auto border rounded shadow-inner border-brown-800"
-        onChange={() => { limitAndThrottle(results.limits[0], results.limits[1], throttleDelay, () => fetchGithub(document.getElementById("search-query").value)) }}
+        onChange={() => { limitAndDebounce(results.limits[0], results.limits[1], document.getElementById("search-query").value) }}
         type="text"
         placeholder="Name or email..."
       />
-      <Button className="mt-4" onClick={() => { fetchGithub(document.getElementById("search-query").value) }}>Search</Button>
+      <Button className="mt-4" onClick={() => { limitAndDebounce(results.limits[0], results.limits[1], document.getElementById("search-query").value) }}>Search</Button>
       {results.overflow && <div id="results-overflow" className="block mt-2 ml-0 mr-auto"><p className="text-sm">Only the first {maxResults} search results are available from the GitHub API</p></div>}
       <div id="results-area" className="container mt-4">
         {results.items.length === 0 || <Pagination isTop={true} />}

@@ -1,4 +1,4 @@
-import { classNames } from "/utils-js/misc"
+import { classNames } from '/utils-js/domProps'
 export default function Button(props) {
   return(
     <button type="button" 
